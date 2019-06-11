@@ -1286,14 +1286,26 @@ public class ApMon {
             Object oValue;
             /** encode the parameters */
             for (i = start; i < nParams; i++) {
+                oValue = paramValues.get(i);
+            	
+                if (oValue==null) {
+                	logger.log(Level.SEVERE, "Null value at index "+i+" for parameter name "+paramNames.get(i));
+                	continue;
+                }
+                
+                final Integer type = mValueTypes.get(oValue.getClass().getName());
+                
+                if (type==null) {
+                	logger.log(Level.SEVERE, "Don't know how to encode parameter of type "+oValue.getClass().getCanonicalName()+" at index "+i+" (parameter name "+paramNames.get(i)+")");
+                	continue;
+                }
 
                 /** parameter name */
                 xdrOS.writeString(paramNames.get(i));
                 xdrOS.pad();
                 /** parameter value type */
-
-                oValue = paramValues.get(i);
-                valType = mValueTypes.get(oValue.getClass().getName()).intValue();
+                                
+                valType = type.intValue();
                 xdrOS.writeInt(valType);
                 xdrOS.pad();
                 /** parameter value */
