@@ -313,7 +313,7 @@ public class MacHostPropertiesMonitor {
 			load1 = toParse.substring(pointA, pointB).trim();
 			pointA = toParse.indexOf(",", pointB + 1);
 			load5 = toParse.substring(pointB + 1, pointA).trim();
-			pointB = toParse.indexOf("\n", pointA);
+			pointB = toParse.indexOf(TOP_CPU_USAGE, pointA);
 			load15 = toParse.substring(pointA + 1, pointB).trim();
 
 			if (DEBUG)
