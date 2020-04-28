@@ -135,7 +135,7 @@ public class MonitoredJob {
 		int nProcesses = 0, nChildren = 1;
 		int i, j;
 
-		cmd = "ps --no-headers -eo ppid,pid";
+		cmd = "ps -eo ppid,pid";
 		result = exec.executeCommandReality(cmd, "");
 		boolean pidFound = false;
 		if (result == null) {
@@ -144,7 +144,11 @@ public class MonitoredJob {
 		}
 
 		StringTokenizer st = new StringTokenizer(result, " \n");
-		nProcesses = st.countTokens() / 2;
+		nProcesses = st.countTokens() / 2 - 1;
+
+		// Skip over the header line with its two tokens
+		st.nextToken();
+		st.nextToken();
 
 		pids = new Vector<>();
 		ppids = new Vector<>();
