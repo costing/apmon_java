@@ -15,6 +15,7 @@ import java.util.Map;
  * @since Nov 13, 2010
  */
 public class MacHostPropertiesMonitor {
+	private static boolean DEBUG = false;
 
 	private String[] networkInterfaces;
 	private String activeInterface;
@@ -59,7 +60,10 @@ public class MacHostPropertiesMonitor {
 		// get the network interfaces up
 		command = sep + "sbin" + sep + "ifconfig -l -u";
 		String result = execute.executeCommand(command, "lo0");
-		// System.out.println(command + " = "+ result);
+
+		if (DEBUG)
+			System.out.println(command + " = " + result);
+
 		if (result == null || result.equals("")) {
 			System.out.println(command + ": No result???");
 		}
@@ -72,7 +76,10 @@ public class MacHostPropertiesMonitor {
 				String current = networkInterfaces[i];
 				command = sep + "sbin" + sep + "ifconfig " + current;
 				result = execute.executeCommand(command, current);
-				// System.out.println(command + " = " + result);
+
+				if (DEBUG)
+					System.out.println(command + " = " + result);
+
 				if (result == null || result.equals("")) {
 					System.out.println(command + ": No result???");
 				}
@@ -81,7 +88,10 @@ public class MacHostPropertiesMonitor {
 						int pointI = result.indexOf("ether");
 						int pointJ = result.indexOf("media", pointI);
 						macAddress = result.substring(pointI + 5, pointJ).trim();
-						// System.out.println("Mac Address:" + macAddress);
+
+						if (DEBUG)
+							System.out.println("Mac Address:" + macAddress);
+
 						activeInterface = current;
 					}
 				}
@@ -91,7 +101,10 @@ public class MacHostPropertiesMonitor {
 		// get the disk information
 		command = sep + "bin" + sep + "df -k -h " + sep;
 		result = execute.executeCommand(command, "/dev");
-		// System.out.println(command + " = "+ result);
+
+		if (DEBUG)
+			System.out.println(command + " = " + result);
+
 		if (result == null || result.equals("")) {
 			System.out.println(command + ": No result???");
 		}
@@ -122,7 +135,10 @@ public class MacHostPropertiesMonitor {
 		// get CPU, load, Mem, Pages, Processes from '/usr/bin/top'
 		command = sep + "usr" + sep + "bin" + sep + "top -d -l2 -n1 -F -R";
 		String result = execute.executeCommand(command, "PID", 2);
-		// System.out.println(command + " = "+ result);
+
+		if (DEBUG)
+			System.out.println(command + " = " + result);
+
 		if (result == null || result.equals("")) {
 			System.out.println("No result???");
 		}
@@ -132,8 +148,8 @@ public class MacHostPropertiesMonitor {
 	}
 
 	private void parseDf(String toParse) {
-
-		// System.out.println("result of df -k -h /:" + toParse);
+		if (DEBUG)
+			System.out.println("result of df -k -h /:" + toParse);
 
 		int pointI = toParse.indexOf("/dev/");
 		int pointJ = 0;
@@ -146,7 +162,10 @@ public class MacHostPropertiesMonitor {
 			diskTotal = toParse.substring(pointJ, pointK).trim();
 		}
 		catch (java.lang.StringIndexOutOfBoundsException e) {
-			// ignore
+			if (DEBUG) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+			}
 		}
 
 		// Get the capacity used
@@ -156,7 +175,10 @@ public class MacHostPropertiesMonitor {
 			diskUsed = toParse.substring(pointI, pointJ).trim();
 		}
 		catch (java.lang.StringIndexOutOfBoundsException e) {
-			// ignore
+			if (DEBUG) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+			}
 		}
 
 		// Get the free space
@@ -166,18 +188,14 @@ public class MacHostPropertiesMonitor {
 			diskFree = toParse.substring(pointK, pointI).trim();
 		}
 		catch (java.lang.StringIndexOutOfBoundsException e) {
-			// ignore
+			if (DEBUG) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+			}
 		}
 
-		/*
-		 * System.out.println(
-		 * "Disk: Total:"
-		 * + diskTotal
-		 * + " Used:"
-		 * + diskUsed
-		 * + " Free:"
-		 * + diskFree);
-		 */
+		if (DEBUG)
+			System.out.println("Disk: Total:" + diskTotal + " Used:" + diskUsed + " Free:" + diskFree);
 	}
 
 	private static int indexOfUnitLetter(String inside, int from) {
@@ -252,7 +270,8 @@ public class MacHostPropertiesMonitor {
 
 	private void parseTop(String toParse) {
 
-		// System.out.println("\n******\n"+toParse+"\n********\n");
+		if (DEBUG)
+			System.out.println("\n******\n" + toParse + "\n********\n");
 
 		int pointA = 0;
 		int pointB = 0;
@@ -263,15 +282,26 @@ public class MacHostPropertiesMonitor {
 		// Processes: 209 total, 13 running, 196 sleeping, 661 threads
 		try {
 			pointA = toParse.indexOf(TOP_PROCESSES);
-			// System.out.println("First Procs at " + pointA);
+
+			if (DEBUG)
+				System.out.println("First Procs at " + pointA);
+
 			pointA = toParse.indexOf(TOP_PROCESSES, pointA + TOP_PROCESSES.length()) + TOP_PROCESSES.length();
-			// System.out.println("Second Procs at " + pointA);
+
+			if (DEBUG)
+				System.out.println("Second Procs at " + pointA);
+
 			pointB = toParse.indexOf(",", pointA + 1);
 			nbProcesses = toParse.substring(pointA, pointB).trim();
-			// System.out.println(nbProcesses + " processes");
+
+			if (DEBUG)
+				System.out.println(nbProcesses + " processes");
 		}
 		catch (java.lang.StringIndexOutOfBoundsException e) {
-			// ignore
+			if (DEBUG) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+			}
 		}
 
 		// Get the loads...
@@ -285,10 +315,15 @@ public class MacHostPropertiesMonitor {
 			load5 = toParse.substring(pointB + 1, pointA).trim();
 			pointB = toParse.indexOf("\n", pointA);
 			load15 = toParse.substring(pointA + 1, pointB).trim();
-			// System.out.println("load: [" + load1 + "][" + load5 + "][" + load15 + "]");
+
+			if (DEBUG)
+				System.out.println("load: [" + load1 + "][" + load5 + "][" + load15 + "]");
 		}
 		catch (java.lang.StringIndexOutOfBoundsException e) {
-			// ignore
+			if (DEBUG) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+			}
 		}
 
 		// Get CPUs...
@@ -305,14 +340,15 @@ public class MacHostPropertiesMonitor {
 			cpuIDLE = toParse.substring(pointA + 1, pointB).trim();
 			sum = 100.0 - Double.parseDouble(cpuIDLE);
 			cpuUsage = String.valueOf(sum);
-			/*
-			 * System.out.println("Cpu Usage:" + cpuUsage + " user:"
-			 * + cpuUSR + " sys:" + cpuSYS
-			 * + " idle:" + cpuIDLE);
-			 */
+
+			if (DEBUG)
+				System.out.println("Cpu Usage:" + cpuUsage + " user:" + cpuUSR + " sys:" + cpuSYS + " idle:" + cpuIDLE);
 		}
 		catch (java.lang.StringIndexOutOfBoundsException e) {
-			// ignore
+			if (DEBUG) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+			}
 		}
 
 		// Get Mem...
@@ -325,13 +361,20 @@ public class MacHostPropertiesMonitor {
 			pointB = toParse.indexOf("M unused", pointB);
 			pointA = toParse.lastIndexOf(",", pointB);
 			memFree = toParse.substring(pointA + 1, pointB).trim();
-			// System.out.println("Mem Used:"+memUsed+"M Free:"+memFree+"M");
+
+			if (DEBUG)
+				System.out.println("Mem Used:" + memUsed + "M Free:" + memFree + "M");
+
 			sum = Double.parseDouble(memUsed) + Double.parseDouble(memFree);
+
 			double percentage = Integer.parseInt(memUsed) * 100 / sum;
 			memUsage = String.valueOf(percentage);
 		}
 		catch (java.lang.StringIndexOutOfBoundsException e) {
-			// ignore
+			if (DEBUG) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+			}
 		}
 
 		// Pages In/Out...
@@ -352,10 +395,14 @@ public class MacHostPropertiesMonitor {
 			if (pagesOut.indexOf('(') > 0)
 				pagesOut = pagesOut.substring(0, pagesOut.indexOf('('));
 
-			// System.out.println("Pages In:" + pagesIn + " Out" + pagesOut);
+			if (DEBUG)
+				System.out.println("Pages In:" + pagesIn + " Out" + pagesOut);
 		}
 		catch (java.lang.StringIndexOutOfBoundsException e) {
-			System.out.println("Can't find pages in :" + toParse);
+			if (DEBUG) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+			}
 		}
 
 		// Get Network IO...
@@ -370,7 +417,9 @@ public class MacHostPropertiesMonitor {
 			if (netIn.indexOf('/') >= 0)
 				netIn = netIn.substring(netIn.indexOf('/') + 1);
 
-			// System.out.print("Net In:" + netIn);
+			if (DEBUG)
+				System.out.print("Net In:" + netIn);
+
 			double factor = howMuchMegaBytes((toParse.substring(unitPos, unitPos + 1).toCharArray())[0]);
 			netIn = String.valueOf(Double.parseDouble(netIn) * factor * 4);
 			pointB = toParse.indexOf("out", pointA);
@@ -381,12 +430,16 @@ public class MacHostPropertiesMonitor {
 			if (netOut.indexOf('/') >= 0)
 				netOut = netIn.substring(netOut.indexOf('/') + 1);
 
-			// System.out.println("Net Out:" + netOut);
+			if (DEBUG)
+				System.out.println("Net Out:" + netOut);
+
 			netOut = String.valueOf(Double.parseDouble(netOut) * factor);
-			// System.out.println("Network In:" + netIn + " OUT:" + netOut);
 		}
 		catch (java.lang.StringIndexOutOfBoundsException e) {
-			System.out.println(e);
+			if (DEBUG) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+			}
 		}
 
 		// Get Disks IO...
@@ -407,11 +460,16 @@ public class MacHostPropertiesMonitor {
 			if (diskOut.indexOf('/') >= 0)
 				diskOut = diskOut.substring(diskOut.indexOf('/') + 1);
 
-			// System.out.println("diskIO In:" + diskIn + " Out:" + diskOut);
+			if (DEBUG)
+				System.out.println("diskIO In:" + diskIn + " Out:" + diskOut);
+
 			diskIO = diskIn + diskOut;
 		}
 		catch (java.lang.StringIndexOutOfBoundsException e) {
-			// ignore
+			if (DEBUG) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -477,6 +535,7 @@ public class MacHostPropertiesMonitor {
 	/**
 	 * @return cpu nice
 	 */
+	@SuppressWarnings("static-method")
 	public String getCpuNICE() {
 		return "0";
 	}
@@ -626,8 +685,10 @@ public class MacHostPropertiesMonitor {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		DEBUG = true;
+
 		MacHostPropertiesMonitor monitor = new MacHostPropertiesMonitor();
-		
+
 		Map<String, Integer> state = monitor.getProcessesState();
 
 		if (state != null)
