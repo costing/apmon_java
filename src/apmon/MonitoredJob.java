@@ -4,11 +4,11 @@
  *
  * Copyright (C) 2006 - 2010 California Institute of Technology
  *
- * Permission is hereby granted, free of charge, to use, copy and modify 
+ * Permission is hereby granted, free of charge, to use, copy and modify
  * this software and its documentation (the "Software") for any
- * purpose, provided that existing copyright notices are retained in 
+ * purpose, provided that existing copyright notices are retained in
  * all copies and that this notice is included verbatim in any distributions
- * or substantial portions of the Software. 
+ * or substantial portions of the Software.
  * This software is a part of the MonALISA framework (http://monalisa.caltech.edu).
  * Users of the Software are asked to feed back problems, benefits,
  * and/or suggestions about the software to the MonALISA Development Team
@@ -16,12 +16,12 @@
  * incorporation of new features - is done on a best effort basis. All bug
  * fixes and enhancements will be made available under the same terms and
  * conditions as the original software,
- 
+ * 
  * IN NO EVENT SHALL THE AUTHORS OR DISTRIBUTORS BE LIABLE TO ANY PARTY FOR
  * DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
  * OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY DERIVATIVES THEREOF,
  * EVEN IF THE AUTHORS HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- 
+ * 
  * THE AUTHORS AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. THIS SOFTWARE IS
@@ -89,7 +89,7 @@ public class MonitoredJob {
 	 * @return disk usage
 	 */
 	public HashMap<Long, Double> readJobDiskUsage() {
-		HashMap<Long, Double> hm = new HashMap<Long, Double>();
+		HashMap<Long, Double> hm = new HashMap<>();
 		String cmd = null, aux = null, result = null;
 		double workdir_size = 0.0, disk_total = 0.0, disk_used = 0.0, disk_free = 0.0, disk_usage = 0.0;
 
@@ -99,29 +99,29 @@ public class MonitoredJob {
 		cmd = "du -Lscm " + workDir + " | tail -1 | cut -f 1";
 		result = exec.executeCommandReality(cmd, "");
 		workdir_size = Double.parseDouble(result);
-		hm.put(ApMonMonitoringConstants.LJOB_WORKDIR_SIZE, new Double(workdir_size));
+		hm.put(ApMonMonitoringConstants.LJOB_WORKDIR_SIZE, Double.valueOf(workdir_size));
 
 		cmd = "df -P -m " + workDir + " | tail -1";
 		result = exec.executeCommand(cmd, "");
 		final StringTokenizer st = new StringTokenizer(result, " \t%");
-		
-		st.nextToken();	// skip over the filesystem name
+
+		st.nextToken(); // skip over the filesystem name
 
 		aux = st.nextToken();
 		disk_total = Double.parseDouble(aux);
-		hm.put(ApMonMonitoringConstants.LJOB_DISK_TOTAL, new Double(disk_total));
+		hm.put(ApMonMonitoringConstants.LJOB_DISK_TOTAL, Double.valueOf(disk_total));
 
 		aux = st.nextToken();
 		disk_used = Double.parseDouble(aux);
-		hm.put(ApMonMonitoringConstants.LJOB_DISK_USED, new Double(disk_used));
+		hm.put(ApMonMonitoringConstants.LJOB_DISK_USED, Double.valueOf(disk_used));
 
 		aux = st.nextToken();
 		disk_free = Double.parseDouble(aux);
-		hm.put(ApMonMonitoringConstants.LJOB_DISK_FREE, new Double(disk_free));
+		hm.put(ApMonMonitoringConstants.LJOB_DISK_FREE, Double.valueOf(disk_free));
 
 		aux = st.nextToken();
 		disk_usage = Double.parseDouble(aux);
-		hm.put(ApMonMonitoringConstants.LJOB_DISK_USAGE, new Double(disk_usage));
+		hm.put(ApMonMonitoringConstants.LJOB_DISK_USAGE, Double.valueOf(disk_usage));
 
 		return hm;
 	}
@@ -146,9 +146,9 @@ public class MonitoredJob {
 		StringTokenizer st = new StringTokenizer(result, " \n");
 		nProcesses = st.countTokens() / 2;
 
-		pids = new Vector<Integer>();
-		ppids = new Vector<Integer>();
-		children = new Vector<Integer>();
+		pids = new Vector<>();
+		ppids = new Vector<>();
+		children = new Vector<>();
 		children.add(Integer.valueOf(pid));
 		while (st.hasMoreTokens()) {
 			i = Integer.parseInt(st.nextToken());
@@ -220,7 +220,7 @@ public class MonitoredJob {
 	 */
 	public HashMap<Long, Double> readJobInfo() throws IOException {
 		Vector<Integer> children;
-		HashMap<Long, Double> ret = new HashMap<Long, Double>();
+		HashMap<Long, Double> ret = new HashMap<>();
 		String cmd = null, result = null;
 		String line = null;
 
@@ -241,7 +241,7 @@ public class MonitoredJob {
 		 * sepparate processes, occupying exactly the same amount of memory and having the same command name. For every line from the output of the ps command we verify if the
 		 * rsz_vsz_command combination is already in the list.
 		 */
-		Vector<String> mem_cmd_list = new Vector<String>();
+		Vector<String> mem_cmd_list = new Vector<>();
 
 		/* get the list of the process' descendants */
 		children = getChildren();
@@ -291,71 +291,79 @@ public class MonitoredJob {
 			}
 		}
 
-		ret.put(ApMonMonitoringConstants.LJOB_RUN_TIME, new Double(etime));
-		ret.put(ApMonMonitoringConstants.LJOB_CPU_TIME, new Double(cputime));
-		ret.put(ApMonMonitoringConstants.LJOB_CPU_USAGE, new Double(pcpu));
-		ret.put(ApMonMonitoringConstants.LJOB_MEM_USAGE, new Double(pmem));
-		ret.put(ApMonMonitoringConstants.LJOB_RSS, new Double(rsz));
-		ret.put(ApMonMonitoringConstants.LJOB_VIRTUALMEM, new Double(vsz));
-		ret.put(ApMonMonitoringConstants.LJOB_OPEN_FILES, new Double(fd));
+		ret.put(ApMonMonitoringConstants.LJOB_RUN_TIME, Double.valueOf(etime));
+		ret.put(ApMonMonitoringConstants.LJOB_CPU_TIME, Double.valueOf(cputime));
+		ret.put(ApMonMonitoringConstants.LJOB_CPU_USAGE, Double.valueOf(pcpu));
+		ret.put(ApMonMonitoringConstants.LJOB_MEM_USAGE, Double.valueOf(pmem));
+		ret.put(ApMonMonitoringConstants.LJOB_RSS, Double.valueOf(rsz));
+		ret.put(ApMonMonitoringConstants.LJOB_VIRTUALMEM, Double.valueOf(vsz));
+		ret.put(ApMonMonitoringConstants.LJOB_OPEN_FILES, Double.valueOf(fd));
 
 		return ret;
 	}
 
-	/** count the number of open files for the given pid 
-	 * @param processid 
-	 * @return opened file descriptors */
+	/**
+	 * count the number of open files for the given pid
+	 * 
+	 * @param processid
+	 * @return opened file descriptors
+	 */
 	public static long countOpenFD(final long processid) {
-		
+
 		long open_files;
 		int mypid = ApMon.getPID();
 		String dir = "/proc/" + processid + "/fd";
 		File f = new File(dir);
-		if(f.exists()){
-			if(f.canRead()){
+		if (f.exists()) {
+			if (f.canRead()) {
 				open_files = (f.list()).length - 2;
-				if(processid == mypid)
+				if (processid == mypid)
 					open_files -= 2;
 				logger.log(Level.FINE, "Counting open_files for process " + processid);
-			}else{
+			}
+			else {
 				open_files = -1;
 				logger.log(Level.SEVERE, "ProcInfo: cannot count the number of opened files for job" + processid);
 			}
-		}else{
+		}
+		else {
 			open_files = -1;
 			logger.log(Level.SEVERE, "ProcInfo: job " + processid + "not exist.");
-		}	
+		}
 		return open_files;
 	}
-
 
 	@Override
 	public String toString() {
 		return "[" + pid + "]" + " " + workDir + " " + " " + clusterName + " " + nodeName;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(final Object obj) {
-		if (obj==null)
+		if (obj == null)
 			return false;
-		
-		if (! (obj instanceof MonitoredJob))
+
+		if (!(obj instanceof MonitoredJob))
 			return false;
-		
+
 		final MonitoredJob other = (MonitoredJob) obj;
-		
-		return pid==other.pid && clusterName.equals(other.clusterName) && nodeName.equals(other.nodeName);
+
+		return pid == other.pid && clusterName.equals(other.clusterName) && nodeName.equals(other.nodeName);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
-		return 13*pid + 19*clusterName.hashCode() + 31*nodeName.hashCode();
+		return 13 * pid + 19 * clusterName.hashCode() + 31 * nodeName.hashCode();
 	}
-	
+
 }

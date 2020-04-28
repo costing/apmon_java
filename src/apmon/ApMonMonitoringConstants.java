@@ -243,7 +243,7 @@ public final class ApMonMonitoringConstants {
     private static HashMap<Long, String>  HT_SYS_CONSTANTS_TO_ML_PARAM_NAMES = null;
     
     static {
-        HT_SYS_NAMES_TO_CONSTANTS = new HashMap<String, Long>();
+        HT_SYS_NAMES_TO_CONSTANTS = new HashMap<>();
         
         HT_SYS_NAMES_TO_CONSTANTS.put("sys_load1",  LSYS_LOAD1);
         HT_SYS_NAMES_TO_CONSTANTS.put("sys_load5",  LSYS_LOAD5);
@@ -277,7 +277,7 @@ public final class ApMonMonitoringConstants {
         HT_SYS_NAMES_TO_CONSTANTS.put("sys_uptime", LSYS_UPTIME);
         
 
-        HT_SYS_CONSTANTS_TO_ML_PARAM_NAMES = new HashMap<Long, String>();
+        HT_SYS_CONSTANTS_TO_ML_PARAM_NAMES = new HashMap<>();
         HT_SYS_CONSTANTS_TO_ML_PARAM_NAMES.put(LSYS_LOAD1,  "load1");
         HT_SYS_CONSTANTS_TO_ML_PARAM_NAMES.put(LSYS_LOAD5,  "load5");
         HT_SYS_CONSTANTS_TO_ML_PARAM_NAMES.put(LSYS_LOAD15, "load15");
@@ -469,7 +469,7 @@ public final class ApMonMonitoringConstants {
     private static HashMap<Long, String>  HT_GEN_CONSTANTS_TO_ML_PARAM_NAMES = null;
 
     static {
-        HT_GEN_NAMES_TO_CONSTANTS = new HashMap<String, Long>();
+        HT_GEN_NAMES_TO_CONSTANTS = new HashMap<>();
         
         HT_GEN_NAMES_TO_CONSTANTS.put("hostname",  LGEN_HOSTNAME);
         HT_GEN_NAMES_TO_CONSTANTS.put("ip",  LGEN_IP);
@@ -484,7 +484,7 @@ public final class ApMonMonitoringConstants {
 		HT_GEN_NAMES_TO_CONSTANTS.put("bogomips", LGEN_BOGOMIPS);
 
         
-        HT_GEN_CONSTANTS_TO_ML_PARAM_NAMES = new HashMap<Long, String>();
+        HT_GEN_CONSTANTS_TO_ML_PARAM_NAMES = new HashMap<>();
         HT_GEN_CONSTANTS_TO_ML_PARAM_NAMES.put(LGEN_HOSTNAME, "hostname");
         HT_GEN_CONSTANTS_TO_ML_PARAM_NAMES.put(LGEN_IP, "ip");
         HT_GEN_CONSTANTS_TO_ML_PARAM_NAMES.put(LGEN_CPU_MHZ, "cpu_MHZ");
@@ -635,7 +635,7 @@ public final class ApMonMonitoringConstants {
     private static HashMap<Long, String>  HT_JOB_CONSTANTS_TO_ML_PARAM_NAMES = null;
     
     static {
-        HT_JOB_NAMES_TO_CONSTANTS = new HashMap<String, Long>();
+        HT_JOB_NAMES_TO_CONSTANTS = new HashMap<>();
         
         HT_JOB_NAMES_TO_CONSTANTS.put("job_run_time",  LJOB_RUN_TIME);
         HT_JOB_NAMES_TO_CONSTANTS.put("job_cpu_time",  LJOB_CPU_TIME);
@@ -652,7 +652,7 @@ public final class ApMonMonitoringConstants {
         HT_JOB_NAMES_TO_CONSTANTS.put("job_rss", LJOB_RSS);
 		HT_JOB_NAMES_TO_CONSTANTS.put("job_open_files", LJOB_OPEN_FILES);
         
-        HT_JOB_CONSTANTS_TO_ML_PARAM_NAMES = new HashMap<Long, String>();
+        HT_JOB_CONSTANTS_TO_ML_PARAM_NAMES = new HashMap<>();
         HT_JOB_CONSTANTS_TO_ML_PARAM_NAMES.put(LJOB_RUN_TIME, "run_time");
         HT_JOB_CONSTANTS_TO_ML_PARAM_NAMES.put(LJOB_CPU_TIME, "cpu_time");
         HT_JOB_CONSTANTS_TO_ML_PARAM_NAMES.put(LJOB_CPU_USAGE, "cpu_usage");
