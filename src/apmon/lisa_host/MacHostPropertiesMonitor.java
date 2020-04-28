@@ -627,9 +627,15 @@ public class MacHostPropertiesMonitor {
 	 */
 	public static void main(String[] args) {
 		MacHostPropertiesMonitor monitor = new MacHostPropertiesMonitor();
+		
 		Map<String, Integer> state = monitor.getProcessesState();
 
-		for (Map.Entry<String, Integer> entry : state.entrySet())
-			System.err.println(entry.getKey() + " : " + entry.getValue());
+		if (state != null)
+			for (Map.Entry<String, Integer> entry : state.entrySet())
+				System.err.println(entry.getKey() + " : " + entry.getValue());
+		else
+			System.err.println("No processes state information");
+
+		System.err.println(MacHostPropertiesMonitor.class.getCanonicalName() + " testing is done, exiting now");
 	}
 }
