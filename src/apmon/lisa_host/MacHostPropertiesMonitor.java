@@ -329,7 +329,7 @@ public class MacHostPropertiesMonitor {
 		// Get CPUs...
 		// CPU usage: 87.87% user, 12.12% sys, 0.0% idle
 		try {
-			pointB = toParse.indexOf(TOP_CPU_USAGE, pointB + 1) + TOP_CPU_USAGE.length();
+			pointB = toParse.indexOf(TOP_CPU_USAGE, pointB) + TOP_CPU_USAGE.length();
 			pointA = toParse.indexOf("% user", pointB);
 			cpuUSR = toParse.substring(pointB, pointA).trim();
 			pointA = toParse.indexOf(",", pointA);
