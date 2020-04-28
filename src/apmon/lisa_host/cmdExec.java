@@ -427,11 +427,11 @@ public class cmdExec {
 			String osName = System.getProperty("os.name");
 			Process proc = null;
 
-			if (osName.indexOf("Win") != -1) {
+			if (osName.contains("Win")) {
 				proc = Runtime.getRuntime().exec(command);
 			}
 			else
-				if (osName.indexOf("Linux") != -1) {
+				if (osName.contains("Linux") || osName.contains("Mac OS X")) {
 					String[] cmd = new String[3];
 					cmd[0] = "/bin/sh";
 					cmd[1] = "-c";
