@@ -193,7 +193,7 @@ public class MonitoredJob {
 	public static long parsePSTime(String s) {
 		long days, hours, mins, secs;
 		if (s.indexOf('-') > 0) {
-			StringTokenizer st = new StringTokenizer(s, "-:");
+			StringTokenizer st = new StringTokenizer(s, "-:.");
 			days = Long.parseLong(st.nextToken());
 			hours = Long.parseLong(st.nextToken());
 			mins = Long.parseLong(st.nextToken());
@@ -201,7 +201,7 @@ public class MonitoredJob {
 			return 24 * 3600 * days + 3600 * hours + 60 * mins + secs;
 		}
 		if (s.indexOf(':') > 0 && s.indexOf(':') != s.lastIndexOf(':')) {
-			StringTokenizer st = new StringTokenizer(s, ":");
+			StringTokenizer st = new StringTokenizer(s, ":.");
 			hours = Long.parseLong(st.nextToken());
 			mins = Long.parseLong(st.nextToken());
 			secs = Long.parseLong(st.nextToken());
@@ -209,7 +209,7 @@ public class MonitoredJob {
 		}
 
 		if (s.indexOf(':') > 0) {
-			StringTokenizer st = new StringTokenizer(s, ":");
+			StringTokenizer st = new StringTokenizer(s, ":.");
 			mins = Long.parseLong(st.nextToken());
 			secs = Long.parseLong(st.nextToken());
 			return 60 * mins + secs;
@@ -256,42 +256,54 @@ public class MonitoredJob {
 		logger.fine("Number of children for process " + pid + ": " + children.size());
 
 		/* issue the "ps" command to obtain information on all the descendants */
-		cmd = "ps --no-headers --pid ";
+		cmd = "ps -p ";
 		for (i = 0; i < children.size() - 1; i++)
 			cmd = cmd + children.elementAt(i) + ",";
 		cmd = cmd + children.elementAt(children.size() - 1);
 
-		cmd = cmd + " -o pid,etime,time,%cpu,%mem,rsz,vsz,comm";
+		cmd = cmd + " -o pid,etime,time,%cpu,%mem,rss,vsz,comm";
 		result = exec.executeCommandReality(cmd, "");
+
+		// skip over the first line of the `ps` output
+		int idx = result.indexOf('\n');
+
+		if (idx > 0)
+			result = result.substring(idx + 1);
 
 		StringTokenizer rst = new StringTokenizer(result, "\n");
 		while (rst.hasMoreTokens()) {
 			line = rst.nextToken();
-			StringTokenizer st = new StringTokenizer(line, " \t");
+			try {
+				StringTokenizer st = new StringTokenizer(line, " \t");
 
-			apid = Long.parseLong(st.nextToken());
-			_etime = parsePSTime(st.nextToken());
-			_cputime = parsePSTime(st.nextToken());
-			_pcpu = Double.parseDouble(st.nextToken());
-			_pmem = Double.parseDouble(st.nextToken());
-			_rsz = Double.parseDouble(st.nextToken());
-			_vsz = Double.parseDouble(st.nextToken());
-			String cmdName = st.nextToken();
+				apid = Long.parseLong(st.nextToken());
+				_etime = parsePSTime(st.nextToken());
+				_cputime = parsePSTime(st.nextToken());
+				_pcpu = Double.parseDouble(st.nextToken());
+				_pmem = Double.parseDouble(st.nextToken());
+				_rsz = Double.parseDouble(st.nextToken());
+				_vsz = Double.parseDouble(st.nextToken());
+				String cmdName = st.nextToken();
 
-			etime = etime > _etime ? etime : _etime;
-			cputime += _cputime;
-			pcpu += _pcpu;
+				etime = etime > _etime ? etime : _etime;
+				cputime += _cputime;
+				pcpu += _pcpu;
 
-			String mem_cmd_s = "" + _rsz + "_" + _vsz + "_" + cmdName;
-			// mem_cmd_list.add(mem_cmd_s);
-			if (mem_cmd_list.indexOf(mem_cmd_s) == -1) {
-				pmem += _pmem;
-				vsz += _vsz;
-				rsz += _rsz;
-				mem_cmd_list.add(mem_cmd_s);
-				long _fd = countOpenFD(apid);
-				if (_fd != -1)
-					fd += _fd;
+				String mem_cmd_s = "" + _rsz + "_" + _vsz + "_" + cmdName;
+				// mem_cmd_list.add(mem_cmd_s);
+				if (mem_cmd_list.indexOf(mem_cmd_s) == -1) {
+					pmem += _pmem;
+					vsz += _vsz;
+					rsz += _rsz;
+					mem_cmd_list.add(mem_cmd_s);
+					long _fd = countOpenFD(apid);
+					if (_fd != -1)
+						fd += _fd;
+				}
+			}
+			catch (final Exception e) {
+				System.err.println("Exception parsing line `" + line + "` of the output of `" + cmd + "`: " + e.getMessage());
+				e.printStackTrace();
 			}
 		}
 
