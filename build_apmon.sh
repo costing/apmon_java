@@ -25,7 +25,7 @@ mkdir -p build/classes
 
 cd src
 
-find apmon -name \*.java | xargs javac -g -d ../build/classes
+find apmon -name \*.java | xargs javac -source 8 -target 8 -g -d ../build/classes
 
 mkdir -p ../build/classes/apmon/lisa_host/Windows
 cp apmon/lisa_host/Windows/*.dll ../build/classes/apmon/lisa_host/Windows/
